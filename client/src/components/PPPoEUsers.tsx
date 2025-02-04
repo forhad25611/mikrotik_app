@@ -6,9 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { WifiIcon, RefreshCcwIcon, SignalIcon, ClockIcon, PhoneIcon, ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import {
   Tooltip,
-  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  TooltipContent,
 } from "@/components/ui/tooltip";
 
 interface PPPoEUsersProps {
@@ -116,14 +116,16 @@ export function PPPoEUsers({ ip }: PPPoEUsersProps) {
                     <PhoneIcon className="h-4 w-4" />
                     Caller ID: {user.callerId || 'N/A'}
                   </p>
-                  <p className="flex items-center gap-2">
-                    <ArrowDownIcon className="h-4 w-4 text-green-500" />
-                    Downloaded: {user.txBytes || '0 B'}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <ArrowUpIcon className="h-4 w-4 text-blue-500" />
-                    Uploaded: {user.rxBytes || '0 B'}
-                  </p>
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-2">
+                      <ArrowDownIcon className="h-4 w-4 text-green-500" />
+                      <span>{user.txBytes || '0 B'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ArrowUpIcon className="h-4 w-4 text-blue-500" />
+                      <span>{user.rxBytes || '0 B'}</span>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
