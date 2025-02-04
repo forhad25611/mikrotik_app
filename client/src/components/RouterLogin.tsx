@@ -18,8 +18,9 @@ const formSchema = z.object({
 
 export function RouterLogin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [routerIp, setRouterIp] = useState("");
   const { toast } = useToast();
-  
+
   const form = useForm<RouterCredentials>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,6 +33,7 @@ export function RouterLogin() {
   const mutation = useMutation({
     mutationFn: authenticateRouter,
     onSuccess: () => {
+      setRouterIp(form.getValues("ip"));
       setIsAuthenticated(true);
       toast({
         title: "Connected successfully",
@@ -52,7 +54,7 @@ export function RouterLogin() {
   }
 
   if (isAuthenticated) {
-    return <RouterInfo ip={form.getValues("ip")} />;
+    return <RouterInfo ip={routerIp} />;
   }
 
   return (
@@ -71,7 +73,7 @@ export function RouterLogin() {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="username"
@@ -85,7 +87,7 @@ export function RouterLogin() {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="password"
