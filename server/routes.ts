@@ -102,7 +102,8 @@ export function registerRoutes(app: Express): Server {
           isOnline: !!activeUser,
           ...(activeUser && {
             uptime: activeUser.uptime,
-            address: activeUser.address
+            address: activeUser.address,
+            callerId: activeUser["caller-id"] || null
           })
         };
       });

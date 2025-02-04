@@ -19,6 +19,7 @@ export interface PPPoEUserStatus {
   isOnline: boolean;
   uptime?: string;
   address?: string;
+  callerId?: string;
 }
 
 export async function authenticateRouter(credentials: RouterCredentials) {
