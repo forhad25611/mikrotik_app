@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getRouterInfo, type RouterInfo as RouterInfoType } from "@/lib/mikrotik";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CpuIcon, ClockIcon, HardDriveIcon, ActivityIcon, ServerIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CpuIcon, ClockIcon, HardDriveIcon, ActivityIcon, ServerIcon, RefreshCcwIcon } from "lucide-react";
 import { PPPoEUsers } from "./PPPoEUsers";
 
 interface RouterInfoProps {
@@ -10,7 +11,7 @@ interface RouterInfoProps {
 }
 
 export function RouterInfo({ ip }: RouterInfoProps) {
-  const { data, isLoading } = useQuery<RouterInfoType>({
+  const { data, isLoading, refetch, isFetching } = useQuery<RouterInfoType>({
     queryKey: [`/api/router/info?ip=${encodeURIComponent(ip)}`],
   });
 
@@ -58,6 +59,18 @@ export function RouterInfo({ ip }: RouterInfoProps) {
 
   return (
     <div className="space-y-8">
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => refetch()}
+          disabled={isFetching}
+        >
+          <RefreshCcwIcon className={`h-4 w-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
+      </div>
+
       <div className="space-y-4">
         {stats.map((stat) => (
           <Card key={stat.label}>
