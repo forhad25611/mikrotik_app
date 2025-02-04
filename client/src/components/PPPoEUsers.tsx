@@ -3,7 +3,7 @@ import { getPPPoEUsers, type PPPoEUserStatus } from "@/lib/mikrotik";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WifiIcon, RefreshCcwIcon, SignalIcon, ClockIcon, PhoneIcon } from "lucide-react";
+import { WifiIcon, RefreshCcwIcon, SignalIcon, ClockIcon, PhoneIcon, ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -115,6 +115,14 @@ export function PPPoEUsers({ ip }: PPPoEUsersProps) {
                   <p className="flex items-center gap-2">
                     <PhoneIcon className="h-4 w-4" />
                     Caller ID: {user.callerId || 'N/A'}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <ArrowDownIcon className="h-4 w-4 text-green-500" />
+                    Downloaded: {user.txBytes || '0 B'}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <ArrowUpIcon className="h-4 w-4 text-blue-500" />
+                    Uploaded: {user.rxBytes || '0 B'}
                   </p>
                 </div>
               )}

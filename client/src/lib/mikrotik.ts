@@ -20,6 +20,8 @@ export interface PPPoEUserStatus {
   uptime?: string;
   address?: string;
   callerId?: string;
+  txBytes?: string;
+  rxBytes?: string;
 }
 
 export async function authenticateRouter(credentials: RouterCredentials) {

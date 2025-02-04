@@ -2,6 +2,13 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { RouterOSAPI } from "node-routeros";
 
+function formatBytes(bytes: number): string {
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  if (bytes === 0) return '0 B';
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+}
+
 export function registerRoutes(app: Express): Server {
   app.post("/api/router/auth", async (req, res) => {
     const { ip, username, password } = req.body;
@@ -103,7 +110,9 @@ export function registerRoutes(app: Express): Server {
           ...(activeUser && {
             uptime: activeUser.uptime,
             address: activeUser.address,
-            callerId: activeUser["caller-id"] || null
+            callerId: activeUser["caller-id"] || null,
+            txBytes: formatBytes(parseInt(activeUser["bytes-out"] || "0")),
+            rxBytes: formatBytes(parseInt(activeUser["bytes-in"] || "0"))
           })
         };
       });
