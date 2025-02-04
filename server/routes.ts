@@ -71,6 +71,51 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  app.get("/api/router/pppoe-users", async (req, res) => {
+    const { ip } = req.query;
+    const auth = req.session?.routerAuth;
+
+    if (!ip || typeof ip !== "string") {
+      return res.status(400).json({ message: "IP address is required" });
+    }
+
+    if (!auth) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    try {
+      const api = new RouterOSAPI({
+        host: ip,
+        user: auth.username,
+        password: auth.password,
+      });
+
+      await api.connect();
+
+      const activeUsers = await api.write("/ppp/active/print");
+      const usernames = Array.from({ length: 10 }, (_, i) => `ismail${i + 1}`);
+
+      const userStatus = usernames.map(username => {
+        const activeUser = activeUsers.find((user: any) => user.name === username);
+        return {
+          username,
+          isOnline: !!activeUser,
+          ...(activeUser && {
+            uptime: activeUser.uptime,
+            address: activeUser.address
+          })
+        };
+      });
+
+      await api.close();
+      res.json(userStatus);
+    } catch (error: any) {
+      res.status(500).json({ 
+        message: "Failed to fetch PPPoE users: " + error.message 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

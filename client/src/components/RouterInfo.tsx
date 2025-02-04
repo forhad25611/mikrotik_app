@@ -3,6 +3,7 @@ import { getRouterInfo, type RouterInfo as RouterInfoType } from "@/lib/mikrotik
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CpuIcon, ClockIcon, HardDriveIcon, ActivityIcon, ServerIcon } from "lucide-react";
+import { PPPoEUsers } from "./PPPoEUsers";
 
 interface RouterInfoProps {
   ip: string;
@@ -56,20 +57,24 @@ export function RouterInfo({ ip }: RouterInfoProps) {
   ];
 
   return (
-    <div className="space-y-4">
-      {stats.map((stat) => (
-        <Card key={stat.label}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {stat.label}
-            </CardTitle>
-            <stat.icon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stat.value}</div>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="space-y-8">
+      <div className="space-y-4">
+        {stats.map((stat) => (
+          <Card key={stat.label}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {stat.label}
+              </CardTitle>
+              <stat.icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <PPPoEUsers ip={ip} />
     </div>
   );
 }

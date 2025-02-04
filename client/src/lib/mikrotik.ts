@@ -14,6 +14,13 @@ export interface RouterInfo {
   memoryUsed: string;
 }
 
+export interface PPPoEUserStatus {
+  username: string;
+  isOnline: boolean;
+  uptime?: string;
+  address?: string;
+}
+
 export async function authenticateRouter(credentials: RouterCredentials) {
   const response = await apiRequest(
     "POST",
@@ -29,4 +36,12 @@ export async function getRouterInfo(ip: string) {
     `/api/router/info?ip=${encodeURIComponent(ip)}`
   );
   return response.json() as Promise<RouterInfo>;
+}
+
+export async function getPPPoEUsers(ip: string) {
+  const response = await apiRequest(
+    "GET",
+    `/api/router/pppoe-users?ip=${encodeURIComponent(ip)}`
+  );
+  return response.json() as Promise<PPPoEUserStatus[]>;
 }
