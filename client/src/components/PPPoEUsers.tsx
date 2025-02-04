@@ -3,10 +3,55 @@ import { getPPPoEUsers, type PPPoEUserStatus } from "@/lib/mikrotik";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WifiIcon, RefreshCcwIcon } from "lucide-react";
+import { WifiIcon, RefreshCcwIcon, SignalIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PPPoEUsersProps {
   ip: string;
+}
+
+function StatusIndicator({ isOnline, uptime }: { isOnline: boolean; uptime?: string }) {
+  let statusColor = "bg-red-500";
+  let statusText = "Offline";
+  let tooltipText = "User is currently offline";
+
+  if (isOnline) {
+    const uptimeHours = uptime ? parseInt(uptime.split(':')[0]) : 0;
+    if (uptimeHours >= 24) {
+      statusColor = "bg-green-500";
+      statusText = "Stable";
+      tooltipText = `Connected for ${uptime}`;
+    } else if (uptimeHours >= 1) {
+      statusColor = "bg-blue-500";
+      statusText = "Online";
+      tooltipText = `Connected for ${uptime}`;
+    } else {
+      statusColor = "bg-yellow-500";
+      statusText = "Recent";
+      tooltipText = "Recently connected";
+    }
+  }
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="flex items-center space-x-2">
+            <div className={`h-3 w-3 rounded-full ${statusColor} animate-pulse`} />
+            <span className="text-sm font-medium">{statusText}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipText}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
 }
 
 export function PPPoEUsers({ ip }: PPPoEUsersProps) {
@@ -43,25 +88,26 @@ export function PPPoEUsers({ ip }: PPPoEUsersProps) {
         </Button>
       </div>
 
-      <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         {data.map((user) => (
-          <Card key={user.username}>
+          <Card key={user.username} className={`
+            transition-shadow duration-200
+            ${user.isOnline ? 'shadow-md hover:shadow-lg' : 'opacity-75'}
+          `}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {user.username}
+              <CardTitle className="text-sm font-medium flex items-center space-x-2">
+                <SignalIcon className={`h-4 w-4 ${user.isOnline ? 'text-green-500' : 'text-red-500'}`} />
+                <span>{user.username}</span>
               </CardTitle>
-              <WifiIcon 
-                className={`h-4 w-4 ${user.isOnline ? 'text-green-500' : 'text-red-500'}`} 
-              />
+              <StatusIndicator isOnline={user.isOnline} uptime={user.uptime} />
             </CardHeader>
             <CardContent>
-              <div className="text-lg font-semibold">
-                {user.isOnline ? 'Online' : 'Offline'}
-              </div>
               {user.isOnline && (
-                <div className="text-sm text-muted-foreground">
-                  <p>Uptime: {user.uptime}</p>
-                  <p>IP: {user.address}</p>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p className="flex items-center gap-2">
+                    <WifiIcon className="h-4 w-4" />
+                    IP: {user.address}
+                  </p>
                 </div>
               )}
             </CardContent>
