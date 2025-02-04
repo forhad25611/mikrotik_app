@@ -11,29 +11,27 @@ import { RouterInfo } from "./RouterInfo";
 import { authenticateRouter, type RouterCredentials } from "@/lib/mikrotik";
 
 const formSchema = z.object({
-  ip: z.string().min(1, "IP address is required"),
   username: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
 });
 
 export function RouterLogin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [routerIp, setRouterIp] = useState("");
+  const [routerIp] = useState("103.200.37.183");
   const { toast } = useToast();
 
-  const form = useForm<RouterCredentials>({
+  const form = useForm<Omit<RouterCredentials, "ip">>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ip: "",
       username: "",
       password: "",
     },
   });
 
   const mutation = useMutation({
-    mutationFn: authenticateRouter,
+    mutationFn: (data: Omit<RouterCredentials, "ip">) => 
+      authenticateRouter({ ...data, ip: routerIp }),
     onSuccess: () => {
-      setRouterIp(form.getValues("ip"));
       setIsAuthenticated(true);
       toast({
         title: "Connected successfully",
@@ -49,7 +47,7 @@ export function RouterLogin() {
     },
   });
 
-  function onSubmit(data: RouterCredentials) {
+  function onSubmit(data: Omit<RouterCredentials, "ip">) {
     mutation.mutate(data);
   }
 
@@ -60,20 +58,6 @@ export function RouterLogin() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="ip"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Router IP</FormLabel>
-              <FormControl>
-                <Input placeholder="192.168.1.1" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="username"
