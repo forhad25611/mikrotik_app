@@ -10,7 +10,7 @@ interface PPPoEUsersProps {
 
 export function PPPoEUsers({ ip }: PPPoEUsersProps) {
   const { data, isLoading } = useQuery<PPPoEUserStatus[]>({
-    queryKey: ["/api/router/pppoe-users", ip],
+    queryKey: [`/api/router/pppoe-users?ip=${encodeURIComponent(ip)}`],
   });
 
   if (isLoading) {

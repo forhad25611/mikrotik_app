@@ -11,7 +11,7 @@ interface RouterInfoProps {
 
 export function RouterInfo({ ip }: RouterInfoProps) {
   const { data, isLoading } = useQuery<RouterInfoType>({
-    queryKey: ["/api/router/info", ip],
+    queryKey: [`/api/router/info?ip=${encodeURIComponent(ip)}`],
   });
 
   if (isLoading) {
