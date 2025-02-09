@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { getRouterInfo, type RouterInfo as RouterInfoType } from "@/lib/mikrotik";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,7 @@ interface RouterInfoProps {
 export function RouterInfo({ ip }: RouterInfoProps) {
   const { data, isLoading, refetch, isFetching } = useQuery<RouterInfoType>({
     queryKey: [`/api/router/info?ip=${encodeURIComponent(ip)}`],
+    queryFn: () => getRouterInfo(ip)
   });
 
   if (isLoading) {
