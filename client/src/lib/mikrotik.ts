@@ -24,34 +24,27 @@ export interface PPPoEUserStatus {
   rxBytes?: string;
 }
 
-const API_BASE = '/api/router';
-
-export async function authenticateRouter(username: string, password: string) {
-  const response = await fetch(`${API_BASE}/auth`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username, password }),
-  });
-  if (!response.ok) {
-    throw new Error('Authentication failed');
-  }
+export async function authenticateRouter(credentials: RouterCredentials) {
+  const response = await apiRequest(
+    "POST",
+    "/api/router/auth",
+    credentials
+  );
   return response.json();
 }
 
-export async function fetchRouterInfo() {
-  const response = await fetch(`${API_BASE}/info`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch router info');
-  }
-  return response.json();
+export async function getRouterInfo(ip: string) {
+  const response = await apiRequest(
+    "GET",
+    `/api/router/info?ip=${encodeURIComponent(ip)}`
+  );
+  return response.json() as Promise<RouterInfo>;
 }
 
-export async function fetchPPPoEUsers() {
-  const response = await fetch(`${API_BASE}/pppoe-users`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch PPPoE users');
-  }
-  return response.json();
+export async function getPPPoEUsers(ip: string) {
+  const response = await apiRequest(
+    "GET",
+    `/api/router/pppoe-users?ip=${encodeURIComponent(ip)}`
+  );
+  return response.json() as Promise<PPPoEUserStatus[]>;
 }
